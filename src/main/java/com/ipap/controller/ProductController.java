@@ -1,5 +1,6 @@
 package com.ipap.controller;
 
+import com.ipap.advice.TrackExecutionTime;
 import jakarta.annotation.PostConstruct;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,5 +38,17 @@ public class ProductController {
     @PostMapping("/{id}")
     public ResponseEntity<String> addProduct(@PathVariable Integer id, @RequestBody String product) {
         return ResponseEntity.ok(products.putIfAbsent(id, product));
+    }
+
+    @TrackExecutionTime
+    @GetMapping("/process")
+    public ResponseEntity<String> processAll() {
+        // Simulate heavy process 1 - 5000 milliseconds.
+        try {
+            Thread.sleep((long) (Math.random() * (5000 - 1) + 1));
+            return ResponseEntity.ok("Process Completed");
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
